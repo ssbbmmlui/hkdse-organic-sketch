@@ -8,6 +8,7 @@ import {
   neighborsOf,
   type Point,
 } from './layout'
+import { ATOM_FONT_FAMILY, atomFontSvgStyle } from './atomFont'
 import type { Molecule } from './types'
 
 function shorten(a: Point, b: Point, ra: number, rb: number): [Point, Point] {
@@ -37,7 +38,7 @@ function escape(s: string): string {
 }
 
 function svgWrap(body: string, box: { minX: number; minY: number; width: number; height: number }, className: string): string {
-  return `<svg class="${className}" viewBox="${box.minX} ${box.minY} ${box.width} ${box.height}" xmlns="http://www.w3.org/2000/svg" role="img">${body}</svg>`
+  return `<svg class="${className}" viewBox="${box.minX} ${box.minY} ${box.width} ${box.height}" xmlns="http://www.w3.org/2000/svg" role="img" font-family="${ATOM_FONT_FAMILY}">${atomFontSvgStyle()}${body}</svg>`
 }
 
 function elOf(mol: Molecule, id: number) {
@@ -406,11 +407,11 @@ export function renderSkeletalSvg(mol: Molecule): string {
       continue
     }
     if (aldehydeHs.has(atom.id)) {
-      parts.push(`<text x="${p.x}" y="${p.y}" class="atom H">${escape(atom.el)}</text>`)
+      parts.push(atomText(p.x, p.y, 'atom H', escape(atom.el)))
       extras.push(p)
       continue
     }
-    parts.push(`<text x="${p.x}" y="${p.y}" class="atom hetero ${atom.el}">${escape(atom.el === 'Cl' ? 'Cl' : atom.el)}</text>`)
+    parts.push(atomText(p.x, p.y, `atom hetero ${atom.el}`, escape(atom.el === 'Cl' ? 'Cl' : atom.el)))
   }
 
   const visible = [...pos.entries()]
