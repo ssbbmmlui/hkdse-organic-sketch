@@ -1,12 +1,5 @@
 import { FormEvent, useMemo, useState } from 'react'
-import {
-  NameError,
-  SERIES_GUIDE,
-  SERIES_META,
-  fromIupacName,
-  renderSkeletalSvg,
-  renderStructuralSvg,
-} from './chemistry'
+import { NameError, SERIES_GUIDE, generateFromName } from './chemistry'
 import { exportSvgMarkupAsPng } from './exportPng'
 
 export default function App() {
@@ -17,12 +10,10 @@ export default function App() {
   const result = useMemo(() => {
     if (!submitted.trim()) return { ok: 'idle' as const }
     try {
-      const mol = fromIupacName(submitted)
+      const drawn = generateFromName(submitted, { showNumbers })
       return {
         ok: true as const,
-        mol,
-        structural: renderStructuralSvg(mol, showNumbers),
-        skeletal: renderSkeletalSvg(mol),
+        ...drawn,
       }
     } catch (err) {
       const message = err instanceof NameError ? err.message : err instanceof Error ? err.message : String(err)
@@ -65,20 +56,20 @@ export default function App() {
         <section className="result">
           <div className="meta">
             <div>
-              <p className="name">{result.mol.parsed.inputName}</p>
+              <p className="name">{result.name}</p>
               <p className="series">
-                {SERIES_META[result.mol.parsed.series].en}
-                <span className="general">{SERIES_META[result.mol.parsed.series].general}</span>
+                {result.seriesLabel.en}
+                <span className="general">{result.seriesLabel.general}</span>
               </p>
             </div>
             <dl className="facts">
               <div>
                 <dt>Molecular formula</dt>
-                <dd>{prettyFormula(result.mol.formula)}</dd>
+                <dd>{prettyFormula(result.formula)}</dd>
               </div>
               <div>
                 <dt>Condensed formula</dt>
-                <dd className="condensed">{prettyFormula(result.mol.condensed)}</dd>
+                <dd className="condensed">{prettyFormula(result.condensed)}</dd>
               </div>
             </dl>
           </div>
@@ -100,7 +91,7 @@ export default function App() {
                   type="button"
                   className="export-btn"
                   onClick={() =>
-                    exportSvgMarkupAsPng(result.structural, result.mol.parsed.inputName, 'structural')
+                    exportSvgMarkupAsPng(result.structuralSvg, result.name, 'structural')
                   }
                 >
                   Export PNG
@@ -108,7 +99,7 @@ export default function App() {
               </header>
               <div
                 className="canvas"
-                dangerouslySetInnerHTML={{ __html: result.structural }}
+                dangerouslySetInnerHTML={{ __html: result.structuralSvg }}
               />
             </article>
             <article className="card">
@@ -118,7 +109,7 @@ export default function App() {
                   type="button"
                   className="export-btn"
                   onClick={() =>
-                    exportSvgMarkupAsPng(result.skeletal, result.mol.parsed.inputName, 'skeletal')
+                    exportSvgMarkupAsPng(result.skeletalSvg, result.name, 'skeletal')
                   }
                 >
                   Export PNG
@@ -126,7 +117,7 @@ export default function App() {
               </header>
               <div
                 className="canvas"
-                dangerouslySetInnerHTML={{ __html: result.skeletal }}
+                dangerouslySetInnerHTML={{ __html: result.skeletalSvg }}
               />
             </article>
           </div>
@@ -156,15 +147,16 @@ export default function App() {
 
       <footer>
         <p>
-          An offline parser written for HKDSE naming rules. Inspired by Cambridge{' '}
+          An offline parser written for HKDSE naming rules. Other apps can call{' '}
+          <code>GET /api/v1/formula?name=hex-1-ene</code> (see README). Inspired by Cambridge{' '}
           <a href="https://github.com/dan2097/opsin" target="_blank" rel="noreferrer">
             OPSIN
           </a>{' '}
           (IUPAC to structure) and Reymond{' '}
           <a href="https://github.com/reymond-group/smilesDrawer" target="_blank" rel="noreferrer">
             SmilesDrawer
-          </a>{' '}
-          (skeletal drawing). This tool does not call external chemistry APIs.
+          </a>
+          . This tool does not call external chemistry APIs.
         </p>
       </footer>
     </div>

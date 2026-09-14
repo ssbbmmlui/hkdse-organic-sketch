@@ -404,6 +404,15 @@ footer a {
   color: var(--teal);
 }
 
+footer code {
+  font-family: ui-monospace, 'Cascadia Code', Consolas, monospace;
+  font-size: 0.8em;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 1px 6px;
+}
+
 @media (max-width: 800px) {
   .cards,
   .row {
