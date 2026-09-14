@@ -1,0 +1,6 @@
+export { parseIupacName, normalizeName } from './parser'
+export { fromIupacName, buildMolecule, molecularFormula } from './molecule'
+export { renderStructuralSvg, renderSkeletalSvg, renderBoth } from './render'
+export { NameError, SERIES_META } from './types'
+export type { Molecule, ParsedCompound, Series } from './types'
+export { EXAMPLES, SERIES_GUIDE } from './examples'

@@ -1,0 +1,10 @@
+node_modules
+dist
+.DS_Store
+*.local
+.env
+.env.*
+desktop.ini
+*.pdf
+_extract21.txt
+_extract42.txt
