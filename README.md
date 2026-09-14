@@ -1,5 +1,11 @@
 # HKDSE IUPAC 結構式產生器
 
+網站已發布於 GitHub Pages：
+
+**https://ssbbmmlui.github.io/hkdse-organic-sketch/**
+
+合併 pull request 到 `main`（或直接推送到 `main`）後，GitHub Actions 會自動測試、建置並部署。也可在 Actions 分頁手動執行 **Deploy to GitHub Pages**。
+
 輸入有機化合物的 IUPAC 系統名稱，產生：
 
 - **結構式**（顯示所有 C、H 與鍵）
