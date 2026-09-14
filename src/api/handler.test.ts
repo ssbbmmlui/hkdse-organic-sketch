@@ -81,7 +81,7 @@ describe('formula HTTP API', () => {
     expect(missing.response.status).toBe(400)
     expect(missing.body.zh).toBeTruthy()
 
-    const bad = await jsonOf('/api/v1/formula?name=cyclohexane')
+    const bad = await jsonOf('/api/v1/formula?name=benzene')
     expect(bad.response.status).toBe(400)
     expect(bad.body.error).toMatch(/outside the HKDSE scope/)
 
