@@ -1,3 +1,5 @@
+import { ATOM_LABEL_CSS, tinosEmbeddedFontFace } from './chemistry/atomFont'
+
 /** Styles mirrored from index.css so the PNG matches the on-screen formula. */
 const FORMULA_CSS = `
 .formula-svg .bond {
@@ -8,11 +10,7 @@ const FORMULA_CSS = `
 .formula-svg.structural .bond { stroke-width: 1.15; }
 .formula-svg.skeletal .bond { stroke-linecap: round; }
 .formula-svg.skeletal .vertex { fill: #1c2430; }
-.formula-svg .atom,
-.formula-svg .locant {
-  font-family: 'Times New Roman', Times, serif;
-  font-weight: 400;
-}
+${ATOM_LABEL_CSS}
 .formula-svg .atom {
   font-size: 15px;
   text-anchor: middle;
@@ -58,14 +56,25 @@ function parseViewBox(svg: SVGSVGElement): { w: number; h: number } {
 }
 
 export function exportSvgMarkupAsPng(svgMarkup: string, compoundName: string, kind: 'structural' | 'skeletal') {
+  void exportSvgMarkupAsPngAsync(svgMarkup, compoundName, kind).catch((err) => {
+    console.error(err)
+  })
+}
+
+async function exportSvgMarkupAsPngAsync(
+  svgMarkup: string,
+  compoundName: string,
+  kind: 'structural' | 'skeletal',
+) {
   const doc = new DOMParser().parseFromString(svgMarkup, 'image/svg+xml')
   const svg = doc.documentElement
   if (!(svg instanceof SVGSVGElement) || doc.querySelector('parsererror')) {
     throw new Error('無法讀取結構圖。')
   }
 
+  const fontFace = await tinosEmbeddedFontFace()
   const style = doc.createElementNS('http://www.w3.org/2000/svg', 'style')
-  style.textContent = FORMULA_CSS
+  style.textContent = `${fontFace}${FORMULA_CSS}`
   svg.insertBefore(style, svg.firstChild)
 
   const { w, h } = parseViewBox(svg)

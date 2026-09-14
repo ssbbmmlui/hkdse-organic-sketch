@@ -291,8 +291,11 @@ body {
 }
 
 .formula-svg .atom,
-.formula-svg .locant {
-  font-family: 'Times New Roman', Times, serif;
+.formula-svg .locant,
+.formula-svg .atom tspan,
+.formula-svg .locant tspan {
+  /* Tinos ships with the app; Times New Roman is not installed on most phones. */
+  font-family: Tinos, 'Times New Roman', TimesNewRomanPSMT, Times, serif;
   font-weight: 400;
 }
 
