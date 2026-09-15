@@ -501,18 +501,33 @@ function compareLocants(a: number[], b: number[]): number {
   return 0
 }
 
-/** Lowest locants for the suffix, then C=C, then prefixes. */
+function principalLocants(p: ParsedCompound): number[] {
+  if (p.carboxyls.length) return p.carboxyls
+  if (p.amides.length) return p.amides
+  if (p.hydroxyls.length) return p.hydroxyls
+  if (p.amines.length) return p.amines
+  return p.carbonyls
+}
+
+/** Locants of each prefix in alphabetical order of the substituent name (di-/tri- ignored). */
+function alphabeticalPrefixLocants(p: ParsedCompound): number[] {
+  return [...p.substituents]
+    .sort((a, b) => a.kind.localeCompare(b.kind))
+    .flatMap((s) => sorted(s.locants))
+}
+
+/**
+ * Lowest locants for the suffix, then C=C, then the prefix locant set.
+ * If that set is the same from either end, the alphabetically earlier
+ * substituent must receive the lower locant (bromo before methyl).
+ */
 function numberingKey(p: ParsedCompound): number[] {
-  const principal = p.carboxyls.length
-    ? p.carboxyls
-    : p.amides.length
-      ? p.amides
-      : p.hydroxyls.length
-        ? p.hydroxyls
-        : p.amines.length
-          ? p.amines
-          : p.carbonyls
-  return [...sorted(principal), ...sorted(p.doubleBonds), ...sorted(p.substituents.flatMap((s) => s.locants))]
+  return [
+    ...sorted(principalLocants(p)),
+    ...sorted(p.doubleBonds),
+    ...sorted(p.substituents.flatMap((s) => s.locants)),
+    ...alphabeticalPrefixLocants(p),
+  ]
 }
 
 function reverseNumbering(p: ParsedCompound): ParsedCompound {
@@ -537,8 +552,8 @@ function rejectNonPreferredNumbering(p: ParsedCompound): void {
   const flipped = reverseNumbering(p)
   if (compareLocants(numberingKey(flipped), numberingKey(p)) < 0) {
     throw new NameError(
-      'This numbering is incorrect. Start from the other end of the chain so the locants are as low as possible.',
-      '編號不正確：應從碳鏈另一端起數，使官能基／雙鍵獲得較小編號。',
+      'This numbering is incorrect. Start from the other end of the chain so the locants are as low as possible. If both ends give the same set of numbers, give the lower locant to the substituent that comes first alphabetically (bromo before methyl).',
+      '編號不正確：應從碳鏈另一端起數，使編號盡量小。若兩端的編號集合相同，字母順序較前的取代基應獲得較小編號（bromo 在 methyl 之前）。',
     )
   }
 }
