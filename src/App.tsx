@@ -1,4 +1,4 @@
-import { FormEvent, useMemo, useState } from 'react'
+import { FormEvent, useEffect, useMemo, useState } from 'react'
 import {
   NameError,
   SERIES_GUIDE,
@@ -8,11 +8,31 @@ import {
   renderStructuralSvg,
 } from './chemistry'
 import { exportSvgMarkupAsPng } from './exportPng'
+import { prettyFormula } from './format'
+import Practice from './Practice'
+
+type Mode = 'draw' | 'practice'
+
+function modeFromHash(): Mode {
+  return window.location.hash === '#practice' ? 'practice' : 'draw'
+}
 
 export default function App() {
+  const [mode, setMode] = useState<Mode>(modeFromHash)
   const [query, setQuery] = useState('')
   const [submitted, setSubmitted] = useState('')
   const [showNumbers, setShowNumbers] = useState(false)
+
+  useEffect(() => {
+    const onHash = () => setMode(modeFromHash())
+    window.addEventListener('hashchange', onHash)
+    return () => window.removeEventListener('hashchange', onHash)
+  }, [])
+
+  const go = (next: Mode) => {
+    setMode(next)
+    window.location.hash = next === 'practice' ? 'practice' : ''
+  }
 
   const result = useMemo(() => {
     if (!submitted.trim()) return { ok: 'idle' as const }
@@ -41,11 +61,28 @@ export default function App() {
         <p className="eyebrow">HKDSE Chemistry</p>
         <h1>Organic Sketch</h1>
         <p className="lede">
-          Enter the IUPAC name of an organic compound (parent chain ≤ 8C) to generate its
-          structural formula and skeletal formula.
+          {mode === 'practice'
+            ? 'Practice mode draws a random compound from the HKDSE rules. Name it, or identify its homologous series.'
+            : 'Enter the IUPAC name of an organic compound (parent chain ≤ 8C) to generate its structural formula and skeletal formula.'}
         </p>
+        <nav className="mode-nav" aria-label="Mode">
+          <button type="button" className={mode === 'draw' ? 'active' : ''} onClick={() => go('draw')}>
+            Draw
+          </button>
+          <button
+            type="button"
+            className={mode === 'practice' ? 'active' : ''}
+            onClick={() => go('practice')}
+          >
+            Practice
+          </button>
+        </nav>
       </header>
 
+      {mode === 'practice' ? <Practice /> : null}
+
+      {mode === 'draw' ? (
+      <>
       <form className="search" onSubmit={onSubmit}>
         <label htmlFor="iupac">IUPAC name</label>
         <div className="row">
@@ -137,7 +174,10 @@ export default function App() {
           <p>{result.message}</p>
         </div>
       ) : null}
+      </>
+      ) : null}
 
+      {mode === 'draw' ? (
       <aside className="guide">
         <h2>Syllabus coverage</h2>
         <p>
@@ -153,6 +193,7 @@ export default function App() {
           ))}
         </ul>
       </aside>
+      ) : null}
 
       <footer>
         <p>
@@ -168,11 +209,5 @@ export default function App() {
         </p>
       </footer>
     </div>
-  )
-}
-
-function prettyFormula(formula: string) {
-  return formula.replace(/(\d+)/g, (n) =>
-    n.replace(/\d/g, (d) => '₀₁₂₃₄₅₆₇₈₉'[Number(d)]),
   )
 }
