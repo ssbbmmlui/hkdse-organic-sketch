@@ -34,25 +34,57 @@ export function functionalFeatures(p: ParsedCompound): Feature[] {
   return out
 }
 
+export function halogenCount(p: ParsedCompound): number {
+  let n = 0
+  for (const sub of p.substituents) {
+    if (HALO_KINDS.has(sub.kind)) n += sub.locants.length
+  }
+  return n
+}
+
+export function alkylBranchCount(p: ParsedCompound): number {
+  let n = 0
+  for (const sub of p.substituents) {
+    if (ALKYL_CARBONS[sub.kind]) n += sub.locants.length
+  }
+  if (p.esterAlkoxy?.methylOnFirst) n += p.esterAlkoxy.methylOnFirst
+  return n
+}
+
+/** Halogen atoms plus alkyl side chains. */
+export function extraCount(p: ParsedCompound): number {
+  return halogenCount(p) + alkylBranchCount(p)
+}
+
 export function hasHalogen(p: ParsedCompound): boolean {
-  return p.substituents.some((s) => HALO_KINDS.has(s.kind))
+  return halogenCount(p) > 0
 }
 
 /** Alkyl side chain on the parent (methyl, ethyl, …), not a halogen. */
 export function hasAlkylBranch(p: ParsedCompound): boolean {
-  if (p.substituents.some((s) => Boolean(ALKYL_CARBONS[s.kind]))) return true
-  return Boolean(p.esterAlkoxy?.methylOnFirst)
+  return alkylBranchCount(p) > 0
+}
+
+/** Several of the same group: diene, diol/triol, diamine, dioic acid, dione. */
+export function isPolyfunctional(p: ParsedCompound): boolean {
+  return (
+    p.doubleBonds.length >= 2 ||
+    p.hydroxyls.length >= 2 ||
+    p.amines.length >= 2 ||
+    p.carboxyls.length >= 2 ||
+    p.carbonyls.length >= 2
+  )
 }
 
 /**
- * Easy: one series, no halogen, no alkyl branch.
- * Medium: one series, and it has a halogen and/or an alkyl branch.
- * Difficult: two or more series / functional groups (halogens and branches allowed).
+ * Easy: one series, and at most one extra (one halogen or one alkyl branch).
+ * Medium: one series, with two or more extras (multiple halogens and/or branches).
+ * Difficult: more than one series / repeated groups (diene, diol, diamine, dioic, …),
+ *            including mixes with halogens and alkyl groups.
  */
 export function classifyDifficulty(p: ParsedCompound): Difficulty {
-  const n = functionalFeatures(p).length
-  if (n >= 2) return 'difficult'
-  if (n === 1 && (hasHalogen(p) || hasAlkylBranch(p))) return 'medium'
+  if (functionalFeatures(p).length >= 2 || isPolyfunctional(p)) return 'difficult'
+  if (extraCount(p) >= 2) return 'medium'
   return 'easy'
 }
 
@@ -62,14 +94,15 @@ export const DIFFICULTY_META: Record<
 > = {
   easy: {
     label: 'Easy',
-    blurb: 'One homologous series, no halogen and no alkyl branch.',
+    blurb: 'One homologous series, with at most one halogen or one alkyl branch.',
   },
   medium: {
     label: 'Medium',
-    blurb: 'One homologous series, with a halogen and/or an alkyl branch.',
+    blurb: 'One homologous series, with multiple halogens and/or alkyl branches.',
   },
   difficult: {
     label: 'Difficult',
-    blurb: 'Two or more series / functional groups; may also have halogens and branches.',
+    blurb:
+      'More than one functional group (diene, diol/triol, diamine, dioic acid, mixed series) and/or mixing those groups with halogens and alkyl branches.',
   },
 }
