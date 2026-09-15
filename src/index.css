@@ -61,6 +61,32 @@ body {
   margin: 0;
 }
 
+.mode-nav {
+  display: flex;
+  gap: 8px;
+  margin: 20px 0 0;
+}
+
+.mode-nav button,
+.level-btn,
+.next-btn,
+.practice-answer button[type='submit'] {
+  border: 1px solid var(--line);
+  background: #fff;
+  color: var(--ink);
+  border-radius: 10px;
+  padding: 8px 16px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.mode-nav button.active,
+.level-btn.active {
+  background: var(--teal);
+  border-color: var(--teal);
+  color: #fff;
+}
+
 .search {
   margin: 28px 0 14px;
 }
@@ -405,6 +431,120 @@ footer {
 
 footer a {
   color: var(--teal);
+}
+
+.practice {
+  margin-top: 22px;
+}
+
+.practice-intro,
+.level-blurb {
+  color: var(--muted);
+  margin: 0 0 12px;
+  max-width: 68ch;
+  line-height: 1.55;
+}
+
+.practice-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+
+.level-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.score {
+  margin: 0;
+  font-weight: 700;
+  color: var(--teal);
+}
+
+.practice-card {
+  margin: 16px 0;
+}
+
+.practice-answer {
+  margin: 18px 0;
+}
+
+.practice-answer .search-label,
+.practice-answer label {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.series-choices {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.choice {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 10px 12px;
+  cursor: pointer;
+}
+
+.choice.on {
+  background: var(--teal-soft);
+  border-color: var(--teal);
+}
+
+.practice-feedback {
+  border-radius: 14px;
+  padding: 16px 18px;
+  margin: 12px 0 8px;
+}
+
+.practice-feedback.ok {
+  background: var(--teal-soft);
+  border: 1px solid #b7d2c8;
+}
+
+.practice-feedback.bad {
+  background: #f8ecec;
+  border: 1px solid #e3c4c4;
+  color: var(--danger);
+}
+
+.practice-feedback p {
+  margin: 8px 0 12px;
+}
+
+.reveal-cards {
+  margin-top: 12px;
+}
+
+.practice-actions {
+  margin: 16px 0 8px;
+}
+
+.next-btn,
+.practice-answer button[type='submit'] {
+  background: var(--teal);
+  border-color: var(--teal);
+  color: #fff;
+  padding: 10px 18px;
+}
+
+.practice-answer button[type='submit']:disabled {
+  opacity: 0.5;
+  cursor: default;
 }
 
 @media (max-width: 800px) {

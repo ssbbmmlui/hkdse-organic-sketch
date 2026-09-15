@@ -24,7 +24,7 @@ npm install
 npm run dev
 ```
 
-瀏覽器開啟 `http://127.0.0.1:5173`，輸入例如 `hex-1-ene`。
+瀏覽器開啟 `http://127.0.0.1:5173`，輸入例如 `hex-1-ene`。網站上的 **Practice** 模式會依難度隨機出題（寫出 IUPAC 名稱，或辨認同系列）。
 
 若你是在雲端同步資料夾開發，把整個專案複製到例如 `C:\Users\<你>\hkdse-iupac-structure` 再安裝依賴。
 
