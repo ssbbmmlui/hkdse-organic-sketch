@@ -339,8 +339,8 @@ export function renderStructuralSvg(mol: Molecule, showNumbers = false, fromRigh
   return svgWrap(parts.join(''), box, 'formula-svg structural')
 }
 
-export function renderSkeletalSvg(mol: Molecule): string {
-  const pos = layoutSkeletal(mol)
+export function renderSkeletalSvg(mol: Molecule, fromRight = false): string {
+  const pos = fromRight ? mirrorX(layoutSkeletal(mol)) : layoutSkeletal(mol)
   const hydroxyls = hydroxylMap(mol)
   const amides = amideNitrogens(mol)
   const aldehydeHs = aldehydeHydrogenIds(mol)
