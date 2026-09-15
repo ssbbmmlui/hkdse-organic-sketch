@@ -23,7 +23,7 @@ describe('difficulty classification', () => {
     expect(classifyDifficulty(parseIupacName('2,3-dimethylbutane'))).toBe('medium')
     expect(classifyDifficulty(parseIupacName('1,2-dichloroethane'))).toBe('medium')
     expect(classifyDifficulty(parseIupacName('chloroform'))).toBe('medium')
-    expect(classifyDifficulty(parseIupacName('2-chloro-3-methylpentane'))).toBe('medium')
+    expect(classifyDifficulty(parseIupacName('2-bromo-1-chloropropane'))).toBe('medium')
     expect(classifyDifficulty(parseIupacName('2,2-dimethylpropane'))).toBe('medium')
   })
 
