@@ -230,6 +230,17 @@ body {
   font-size: 0.9rem;
 }
 
+.toggles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 28px;
+  margin: 8px 0 16px;
+}
+
+.toggles .toggle {
+  margin: 0;
+}
+
 .cards {
   display: grid;
   grid-template-columns: 1fr 1fr;
