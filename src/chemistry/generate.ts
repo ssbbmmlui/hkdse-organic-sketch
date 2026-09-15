@@ -224,6 +224,67 @@ function* candidateNames(): Generator<string> {
   yield '4-bromo-3-methylpentan-1-ol'
   yield '3-chloroprop-1-ene'
   yield '4-bromobut-1-ene'
+
+  for (let n = 4; n <= 8; n += 1) {
+    for (let a = 1; a <= n - 2; a += 1) {
+      for (let b = a + 1; b <= n - 1; b += 1) {
+        yield `${stem(n)}a-${a},${b}-diene`
+      }
+    }
+  }
+  yield 'penta-1,3-diene'
+  yield 'penta-1,4-diene'
+  yield 'hexa-1,3-diene'
+  yield 'hexa-1,4-diene'
+  yield 'hexa-2,4-diene'
+
+  for (let n = 2; n <= 8; n += 1) {
+    for (let a = 1; a <= n - 1; a += 1) {
+      for (let b = a + 1; b <= n; b += 1) {
+        yield `${stem(n)}ane-${a},${b}-diol`
+        yield `${stem(n)}ane-${a},${b}-diamine`
+      }
+    }
+  }
+  yield 'propane-1,2-diol'
+  yield 'propane-1,2,3-triol'
+  yield 'butane-1,2,3-triol'
+  yield 'pentane-1,2,3-triol'
+  yield 'propane-1,2,3-triamine'
+  yield 'butane-1,2-diamine'
+  yield 'pentane-1,5-diamine'
+
+  for (let n = 2; n <= 8; n += 1) yield `${stem(n)}anedioic acid`
+  yield 'ethanedioic acid'
+  yield 'butanedioic acid'
+  yield 'hexanedioic acid'
+  yield 'hex-3-enedioic acid'
+  yield 'octa-3,5-dienedioic acid'
+
+  for (let n = 4; n <= 8; n += 1) {
+    for (let a = 2; a <= n - 2; a += 1) {
+      for (let b = a + 1; b <= n - 1; b += 1) {
+        yield `${stem(n)}ane-${a},${b}-dione`
+      }
+    }
+  }
+  yield 'pentane-2,4-dione'
+
+  for (let n = 5; n <= 8; n += 1) {
+    for (let mLoc = 2; mLoc <= n - 1; mLoc += 1) {
+      yield `${mLoc}-methyl${stem(n)}ane-1,2-diol`
+      yield `${mLoc}-methyl${stem(n)}anedioic acid`
+      yield `${mLoc}-methylhexa-1,3-diene`
+    }
+  }
+  for (const halo of ['chloro', 'bromo'] as const) {
+    for (let n = 4; n <= 7; n += 1) {
+      yield `1-${halo}${stem(n)}ane-1,2-diol`
+      yield `${n}-${halo}${stem(n)}anedioic acid`
+      yield `4-${halo}hexa-1,3-diene`
+      yield `3-${halo}-2-methyl${stem(n)}ane`
+    }
+  }
 }
 
 let catalog: PracticeCompound[] | null = null
