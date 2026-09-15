@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { compactAlkylGroups, compactAminoGroups, layoutSkeletal, layoutStructural } from './layout'
+import { compactAlkylGroups, compactAminoGroups, layoutSkeletal, layoutStructural, mirrorX } from './layout'
 import { fromIupacName } from './molecule'
 import { renderSkeletalSvg, renderStructuralSvg } from './render'
 
@@ -528,5 +528,14 @@ describe('formula layout', () => {
     const right = renderStructuralSvg(mol, true, true)
     expect(locantX(left, 1)).toBeLessThan(locantX(left, 6))
     expect(locantX(right, 1)).toBeGreaterThan(locantX(right, 6))
+  })
+
+  it('mirrors the skeletal chain when fromRight is set', () => {
+    const mol = fromIupacName('hex-1-ene')
+    const left = layoutSkeletal(mol)
+    const right = mirrorX(left)
+    expect(left.get(mol.chain[0])!.x).toBeLessThan(left.get(mol.chain[5])!.x)
+    expect(right.get(mol.chain[0])!.x).toBeGreaterThan(right.get(mol.chain[5])!.x)
+    expect(renderSkeletalSvg(mol, true)).not.toBe(renderSkeletalSvg(mol, false))
   })
 })

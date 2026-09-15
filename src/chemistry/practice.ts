@@ -12,7 +12,7 @@ export interface PracticeQuestion {
   kind: QuestionKind
   view: FormulaView
   seriesOptions: Series[]
-  /** Structural formulae may run C1→Cn left-to-right or right-to-left. */
+  /** Practice formulae may run C1→Cn left-to-right or right-to-left. */
   fromRight: boolean
 }
 

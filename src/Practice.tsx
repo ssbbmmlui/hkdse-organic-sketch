@@ -28,7 +28,7 @@ export default function Practice() {
   const drawing = useMemo(
     () =>
       question.view === 'skeletal'
-        ? renderSkeletalSvg(mol)
+        ? renderSkeletalSvg(mol, question.fromRight)
         : renderStructuralSvg(mol, showNumbers, question.fromRight),
     [mol, question.view, question.fromRight, showNumbers],
   )
@@ -177,7 +177,10 @@ export default function Practice() {
             </article>
             <article className="card">
               <h2>Skeletal formula</h2>
-              <div className="canvas" dangerouslySetInnerHTML={{ __html: renderSkeletalSvg(mol) }} />
+              <div
+                className="canvas"
+                dangerouslySetInnerHTML={{ __html: renderSkeletalSvg(mol, question.fromRight) }}
+              />
             </article>
           </div>
         </div>
