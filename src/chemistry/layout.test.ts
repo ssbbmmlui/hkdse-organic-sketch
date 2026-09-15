@@ -516,4 +516,17 @@ describe('formula layout', () => {
     expect(hydroxylO).toBeDefined()
     expect(Math.abs(pos.get(hydroxylO!)!.x - carboxyl.x)).toBeGreaterThan(20)
   })
+
+  it('can place locant 1 on the right of the structural formula', () => {
+    const mol = fromIupacName('hex-1-ene')
+    const locantX = (svg: string, n: number) => {
+      const m = svg.match(new RegExp(`x="([^"]+)"[^>]*class="locant">${n}<`))
+      expect(m, `missing locant ${n}`).toBeTruthy()
+      return Number(m![1])
+    }
+    const left = renderStructuralSvg(mol, true, false)
+    const right = renderStructuralSvg(mol, true, true)
+    expect(locantX(left, 1)).toBeLessThan(locantX(left, 6))
+    expect(locantX(right, 1)).toBeGreaterThan(locantX(right, 6))
+  })
 })

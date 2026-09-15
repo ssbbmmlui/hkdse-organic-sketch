@@ -12,6 +12,8 @@ export interface PracticeQuestion {
   kind: QuestionKind
   view: FormulaView
   seriesOptions: Series[]
+  /** Structural formulae may run C1→Cn left-to-right or right-to-left. */
+  fromRight: boolean
 }
 
 const ALL_SERIES = Object.keys(SERIES_META) as Series[]
@@ -40,6 +42,7 @@ export function nextQuestion(difficulty: Difficulty, previousName?: string): Pra
     kind,
     view: mol.parsed.chainLength <= 1 ? 'structural' : view,
     seriesOptions: seriesChoices(mol.parsed.series),
+    fromRight: mol.parsed.chainLength > 1 && Math.random() < 0.5,
   }
 }
 

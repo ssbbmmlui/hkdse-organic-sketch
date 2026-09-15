@@ -27,8 +27,10 @@ export default function Practice() {
   const mol = useMemo(() => fromIupacName(question.item.name), [question])
   const drawing = useMemo(
     () =>
-      question.view === 'skeletal' ? renderSkeletalSvg(mol) : renderStructuralSvg(mol, showNumbers),
-    [mol, question.view, showNumbers],
+      question.view === 'skeletal'
+        ? renderSkeletalSvg(mol)
+        : renderStructuralSvg(mol, showNumbers, question.fromRight),
+    [mol, question.view, question.fromRight, showNumbers],
   )
 
   const startQuestion = (level: Difficulty, previousName?: string) => {
@@ -168,7 +170,9 @@ export default function Practice() {
               <h2>Structural formula</h2>
               <div
                 className="canvas"
-                dangerouslySetInnerHTML={{ __html: renderStructuralSvg(mol, showNumbers) }}
+                dangerouslySetInnerHTML={{
+                  __html: renderStructuralSvg(mol, showNumbers, question.fromRight),
+                }}
               />
             </article>
             <article className="card">
