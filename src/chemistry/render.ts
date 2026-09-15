@@ -5,6 +5,7 @@ import {
   compactAminoGroups,
   layoutSkeletal,
   layoutStructural,
+  mirrorX,
   neighborsOf,
   type Point,
 } from './layout'
@@ -252,8 +253,8 @@ function drawAlkyl(label: string, carbon: Point, parent: Point, glyphDy = 0): { 
   }
 }
 
-export function renderStructuralSvg(mol: Molecule, showNumbers = false): string {
-  const pos = layoutStructural(mol)
+export function renderStructuralSvg(mol: Molecule, showNumbers = false, fromRight = false): string {
+  const pos = fromRight ? mirrorX(layoutStructural(mol)) : layoutStructural(mol)
   const hydroxyls = hydroxylMap(mol)
   const alkyls = compactAlkylGroups(mol)
   const alkylRoot = new Map(alkyls.map((g) => [g.root, g]))

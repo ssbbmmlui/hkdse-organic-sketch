@@ -20,6 +20,17 @@ export function opposite(d: Dir): Dir {
   return ({ N: 'S', S: 'N', E: 'W', W: 'E' } as const)[d]
 }
 
+/** Reflect a layout horizontally so chain locant 1 can sit on the right. */
+export function mirrorX(pos: Map<number, Point>): Map<number, Point> {
+  const xs = [...pos.values()].map((p) => p.x)
+  if (!xs.length) return new Map(pos)
+  const min = Math.min(...xs)
+  const max = Math.max(...xs)
+  const out = new Map<number, Point>()
+  for (const [id, p] of pos) out.set(id, { x: min + max - p.x, y: p.y })
+  return out
+}
+
 export function rightOf(d: Dir): Dir {
   return ({ N: 'E', E: 'S', S: 'W', W: 'N' } as const)[d]
 }
