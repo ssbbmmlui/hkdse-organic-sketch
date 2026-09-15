@@ -22,6 +22,7 @@ export default function App() {
   const [query, setQuery] = useState('')
   const [submitted, setSubmitted] = useState('')
   const [showNumbers, setShowNumbers] = useState(false)
+  const [fromRight, setFromRight] = useState(false)
 
   useEffect(() => {
     const onHash = () => setMode(modeFromHash())
@@ -41,14 +42,14 @@ export default function App() {
       return {
         ok: true as const,
         mol,
-        structural: renderStructuralSvg(mol, showNumbers),
-        skeletal: renderSkeletalSvg(mol),
+        structural: renderStructuralSvg(mol, showNumbers, fromRight),
+        skeletal: renderSkeletalSvg(mol, fromRight),
       }
     } catch (err) {
       const message = err instanceof NameError ? err.message : err instanceof Error ? err.message : String(err)
       return { ok: false as const, message }
     }
-  }, [submitted, showNumbers])
+  }, [submitted, showNumbers, fromRight])
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault()
@@ -120,14 +121,24 @@ export default function App() {
             </dl>
           </div>
 
-          <label className="toggle">
-            <input
-              type="checkbox"
-              checked={showNumbers}
-              onChange={(e) => setShowNumbers(e.target.checked)}
-            />
-            Show carbon numbers on the structural formula
-          </label>
+          <div className="toggles">
+            <label className="toggle">
+              <input
+                type="checkbox"
+                checked={showNumbers}
+                onChange={(e) => setShowNumbers(e.target.checked)}
+              />
+              Show carbon numbers on the structural formula
+            </label>
+            <label className="toggle">
+              <input
+                type="checkbox"
+                checked={fromRight}
+                onChange={(e) => setFromRight(e.target.checked)}
+              />
+              Mirror the chain (count carbons from right to left)
+            </label>
+          </div>
 
           <div className="cards">
             <article className="card">
