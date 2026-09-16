@@ -468,8 +468,15 @@ export function layoutSkeletal(mol: Molecule, bond = 34): Map<number, Point> {
       const terminal = idx === 0 || idx === mol.chain.length - 1
       const convex = idx !== -1 ? convexAngle(id) : null
       const continuation = terminal && idx !== -1 ? zigzagContinuation(idx) : null
+      const methanoicCarboxyl =
+        mol.chain.length === 1 && mol.parsed.carboxyls.includes(1) && !mol.parsed.esterAlkoxy
       let chosen: number
-      if (carbonyl && convex !== null && ok(convex)) {
+      if (methanoicCarboxyl && carbonyl) {
+        // Textbook HCOOH hook: vertical C=O, not a 120° V with OH.
+        chosen = -Math.PI / 2
+      } else if (methanoicCarboxyl && hydroxyl) {
+        chosen = Math.PI / 6
+      } else if (carbonyl && convex !== null && ok(convex)) {
         chosen = convex
       } else if (aldehydeH && mol.chain.length === 1) {
         // Methanal: 120° V with H left and right, not a horizontal H—C—H line.
