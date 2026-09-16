@@ -504,6 +504,57 @@ describe('formula layout', () => {
     expect(Math.abs(pos.get(h.id)!.x - c2.x)).toBeLessThan(8)
   })
 
+  it('draws methanoic acid skeletal as a vertical C=O with OH down-right', () => {
+    const mol = fromIupacName('methanoic acid')
+    const pos = layoutSkeletal(mol)
+    const c1 = mol.chain[0]
+    const carbon = pos.get(c1)!
+    const oxo = mol.atoms.find((a) => {
+      if (a.el !== 'O') return false
+      return mol.bonds.some(
+        (b) => b.order === 2 && ((b.a === a.id && b.b === c1) || (b.b === a.id && b.a === c1)),
+      )
+    })!
+    const hydroxyl = mol.atoms.find((a) => {
+      if (a.el !== 'O') return false
+      return mol.bonds.some(
+        (b) => b.order === 1 && ((b.a === a.id && b.b === c1) || (b.b === a.id && b.a === c1)),
+      )
+    })!
+    const oxoP = pos.get(oxo.id)!
+    const ohP = pos.get(hydroxyl.id)!
+    expect(Math.abs(oxoP.x - carbon.x)).toBeLessThan(2)
+    expect(oxoP.y).toBeLessThan(carbon.y)
+    expect(ohP.x).toBeGreaterThan(carbon.x + 8)
+    expect(ohP.y).toBeGreaterThan(carbon.y + 8)
+    const oxoA = Math.atan2(oxoP.y - carbon.y, oxoP.x - carbon.x)
+    const ohA = Math.atan2(ohP.y - carbon.y, ohP.x - carbon.x)
+    const hook = (Math.abs(Math.atan2(Math.sin(ohA - oxoA), Math.cos(ohA - oxoA))) * 180) / Math.PI
+    expect(hook).toBeGreaterThan(100)
+    expect(hook).toBeLessThan(140)
+  })
+
+  it('keeps longer-acid skeletal carboxyls on the zigzag, not the methanoic hook', () => {
+    const mol = fromIupacName('ethanoic acid')
+    const pos = layoutSkeletal(mol)
+    const c1 = mol.chain[0]
+    const carbon = pos.get(c1)!
+    const oxo = mol.atoms.find((a) => {
+      if (a.el !== 'O') return false
+      return mol.bonds.some(
+        (b) => b.order === 2 && ((b.a === a.id && b.b === c1) || (b.b === a.id && b.a === c1)),
+      )
+    })!
+    const hydroxyl = mol.atoms.find((a) => {
+      if (a.el !== 'O') return false
+      return mol.bonds.some(
+        (b) => b.order === 1 && ((b.a === a.id && b.b === c1) || (b.b === a.id && b.a === c1)),
+      )
+    })!
+    expect(pos.get(oxo.id)!.y).toBeGreaterThan(carbon.y)
+    expect(pos.get(hydroxyl.id)!.x).toBeLessThan(carbon.x)
+  })
+
   it('puts carboxylic OH to the side of the carboxyl carbon', () => {
     const mol = fromIupacName('ethanoic acid')
     const pos = layoutStructural(mol)
